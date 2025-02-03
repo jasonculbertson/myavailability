@@ -60,7 +60,7 @@ export default function TermsOfService() {
 
         <h2>10. Contact Us</h2>
         <p>
-          If you have any questions about these Terms, please contact us at [Your Contact Email].
+          If you have any questions about these Terms, please contact us at jculbertson@gmail.com.
         </p>
       </div>
     </div>

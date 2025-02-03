@@ -53,7 +53,7 @@ export default function PrivacyPolicy() {
 
         <h2>7. Contact Us</h2>
         <p>
-          If you have any questions about this Privacy Policy, please contact us at [Your Contact Email].
+          If you have any questions about this Privacy Policy, please contact us at jculbertson@gmail.com.
         </p>
       </div>
     </div>

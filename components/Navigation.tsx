@@ -9,7 +9,7 @@ export function Navigation() {
   const isConnected = !!session?.accessToken
 
   return (
-    <nav className="border-b border-white/10">
+    <nav>
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center space-x-8">
           <Link href="/" className="text-xl font-bold text-primary">
