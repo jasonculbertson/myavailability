@@ -20,7 +20,6 @@ export const authOptions = {
         params: {
           scope: [
             'https://www.googleapis.com/auth/calendar.readonly',
-            'https://www.googleapis.com/auth/calendar.events.readonly',
             'https://www.googleapis.com/auth/userinfo.email',
             'https://www.googleapis.com/auth/userinfo.profile'
           ].join(' '),

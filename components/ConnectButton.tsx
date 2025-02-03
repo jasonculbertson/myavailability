@@ -23,7 +23,7 @@ export function ConnectButton() {
       className="bg-primary hover:bg-primary-hover text-white h-12 px-8 rounded-full"
     >
       <Calendar className="w-5 h-5 mr-2" />
-      {session ? 'Disconnect Google Calendar' : 'Connect Google Calendar'}
+      {session ? 'Disconnect Calendar' : 'Connect Calendar'}
     </Button>
   )
 }

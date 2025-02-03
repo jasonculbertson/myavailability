@@ -274,12 +274,11 @@ export default function SchedulePage() {
               <CardDescription className="text-white/70">Choose a date range for your availability</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="bg-white rounded-2xl p-8">
-                <CustomCalendar 
-                  selectedDates={selectedDates} 
-                  onSelect={handleDateSelection} 
-                />
-              </div>
+              <CustomCalendar 
+                selectedDates={selectedDates} 
+                onSelect={handleDateSelection} 
+                className="rounded-2xl"
+              />
             </CardContent>
           </Card>
 
