@@ -100,7 +100,7 @@ export default function Home() {
         {/* CTA Section */}
         <div className="mt-32 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to simplify your scheduling?</h2>
-          <p className="text-white/70 mb-8">Join thousands of professionals who are saving time with TimeSync.</p>
+          <p className="text-white/70 mb-8">Join thousands of professionals who are saving time with MyAvailability.</p>
           <Button className="bg-primary hover:bg-primary-hover text-white h-12 px-8 rounded-full">
             Get started for free
           </Button>
