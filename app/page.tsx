@@ -9,7 +9,7 @@ export default function Home() {
       <nav className="border-b border-white/10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center space-x-8">
-            <span className="text-xl font-bold text-primary">TimeSync</span>
+            <span className="text-xl font-bold text-primary">MyAvailability</span>
             <div className="hidden md:flex items-center space-x-6">
               <Link href="/how-it-works" className="text-white/70 hover:text-white transition-colors">
                 How it Works
@@ -109,4 +109,3 @@ export default function Home() {
     </div>
   )
 }
-
