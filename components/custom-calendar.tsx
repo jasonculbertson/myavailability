@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
@@ -17,18 +17,15 @@ import {
 import { motion, AnimatePresence } from "framer-motion"
 
 interface CalendarProps {
-  value?: Date | Date[]
-  onChange?: (value: Date | Date[]) => void
-  numberOfMonths?: number
+  onSelect?: (dates: Date[]) => void
+  selectedDates?: Date[]
+  className?: string
 }
 
-export function CustomCalendar({ value, onChange, numberOfMonths = 2 }: CalendarProps) {
+export function CustomCalendar({ onSelect, selectedDates = [] }: CalendarProps) {
   const [baseDate, setBaseDate] = useState(startOfToday())
-  const [selectedDates, setSelectedDates] = useState<Date[]>([])
-
-  const months = Array.from({ length: numberOfMonths }, (_, i) => addMonths(baseDate, i))
-  const isCurrentMonth =
-    baseDate.getMonth() === new Date().getMonth() && baseDate.getFullYear() === new Date().getFullYear()
+  const months = [baseDate, addMonths(baseDate, 1)]
+  const isCurrentMonth = baseDate.getMonth() === new Date().getMonth() && baseDate.getFullYear() === new Date().getFullYear()
 
   const handlePreviousMonth = () => {
     if (!isCurrentMonth) {
@@ -41,6 +38,7 @@ export function CustomCalendar({ value, onChange, numberOfMonths = 2 }: Calendar
   }
 
   const handleDateClick = (date: Date) => {
+    if (!onSelect) return
     const newDates = [...selectedDates]
     const clickedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
     const dateIndex = newDates.findIndex(
@@ -56,36 +54,7 @@ export function CustomCalendar({ value, onChange, numberOfMonths = 2 }: Calendar
       newDates.push(clickedDate)
     }
 
-    setSelectedDates(newDates)
-    if (onChange) {
-      onChange(newDates)
-    }
-  }
-
-  const clearDates = () => {
-    setSelectedDates([])
-    if (onChange) {
-      onChange([])
-    }
-  }
-
-  const isInRange = (date: Date) => {
-    if (selectedDates.length < 2) return false
-    const sortedDates = [...selectedDates].sort((a, b) => a.getTime() - b.getTime())
-    const start = new Date(sortedDates[0].getFullYear(), sortedDates[0].getMonth(), sortedDates[0].getDate())
-    const end = new Date(
-      sortedDates[sortedDates.length - 1].getFullYear(),
-      sortedDates[sortedDates.length - 1].getMonth(),
-      sortedDates[sortedDates.length - 1].getDate(),
-    )
-    return (
-      date >= start &&
-      date <= end &&
-      !selectedDates.some(
-        (d) =>
-          d.getFullYear() === date.getFullYear() && d.getMonth() === date.getMonth() && d.getDate() === date.getDate(),
-      )
-    )
+    onSelect(newDates)
   }
 
   const renderMonth = (date: Date) => {
@@ -116,7 +85,6 @@ export function CustomCalendar({ value, onChange, numberOfMonths = 2 }: Calendar
                 d.getDate() === day.getDate(),
             )
             const isPast = isBefore(day, startOfToday())
-            const inRange = isInRange(day)
 
             return (
               <button
@@ -126,7 +94,6 @@ export function CustomCalendar({ value, onChange, numberOfMonths = 2 }: Calendar
                 className={`h-10 w-10 rounded-full flex items-center justify-center text-base transition-colors relative
                   ${isPast ? "text-gray-300 cursor-not-allowed" : "hover:bg-gray-100"}
                   ${isSelected ? "border-2 border-black text-black" : ""}
-                  ${inRange ? "bg-gray-100" : ""}
                 `}
               >
                 {format(day, "d")}
@@ -174,12 +141,16 @@ export function CustomCalendar({ value, onChange, numberOfMonths = 2 }: Calendar
         </motion.div>
       </AnimatePresence>
 
-      <div className="flex items-center justify-end mt-6">
-        <Button variant="ghost" size="sm" onClick={clearDates} className="text-gray-500 hover:text-gray-900">
-          Clear dates
-        </Button>
-      </div>
+      {selectedDates.length > 0 && (
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={() => onSelect && onSelect([])}
+            className="text-sm text-gray-500 hover:text-gray-900"
+          >
+            Clear dates
+          </button>
+        </div>
+      )}
     </div>
   )
 }
-

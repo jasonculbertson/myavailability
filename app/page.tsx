@@ -1,31 +1,13 @@
+'use client'
+
 import { Button } from "@/components/ui/button"
-import { Calendar, Clock, ClipboardCheck, Copy } from "lucide-react"
+import { Calendar, Clock, ClipboardCheck, Copy, LogOut } from "lucide-react"
 import Link from "next/link"
+import { ConnectButton } from "@/components/ConnectButton"
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#111111] text-white">
-      {/* Navigation */}
-      <nav className="border-b border-white/10">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-8">
-            <span className="text-xl font-bold text-primary">MyAvailability</span>
-            <div className="hidden md:flex items-center space-x-6">
-              <Link href="/how-it-works" className="text-white/70 hover:text-white transition-colors">
-                How it Works
-              </Link>
-              <Link href="/schedule" className="text-white/70 hover:text-white transition-colors">
-                Schedule
-              </Link>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button className="text-white/70 hover:text-white transition-colors">Log In</button>
-            <Button className="bg-primary hover:bg-primary-hover text-white border-0">Get started</Button>
-          </div>
-        </div>
-      </nav>
-
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-24 md:py-32">
         <div className="max-w-4xl mx-auto text-center mb-16">
@@ -34,11 +16,10 @@ export default function Home() {
             Connect your Google Calendar, set your preferences, and copy your available time slots in seconds. No more
             back-and-forth emails about scheduling.
           </p>
-          <Button className="bg-primary hover:bg-primary-hover text-white h-12 px-8 rounded-full">
-            <Calendar className="w-5 h-5 mr-2" />
-            Connect Google Calendar
-          </Button>
-          <p className="text-white/50 text-sm mt-4">Free forever. No credit card required.</p>
+          <div className="flex flex-col items-center gap-4">
+            <ConnectButton />
+            <p className="text-white/50 text-sm">Free forever. No credit card required.</p>
+          </div>
         </div>
 
         {/* Calendar Preview */}
@@ -58,14 +39,14 @@ export default function Home() {
                   <Clock className="w-5 h-5 text-primary" />
                   <div>
                     <p className="font-medium text-white">30 minute meeting</p>
-                    <p className="text-sm text-white/50">Mon-Fri, 9:00 AM - 5:00 PM</p>
+                    <p className="text-sm text-white/50">Mon-Fri, 9:00 AM - 6:00 PM</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4 p-4 bg-white/5 rounded-lg">
                   <Clock className="w-5 h-5 text-primary" />
                   <div>
                     <p className="font-medium text-white">60 minute meeting</p>
-                    <p className="text-sm text-white/50">Mon-Fri, 9:00 AM - 5:00 PM</p>
+                    <p className="text-sm text-white/50">Mon-Fri, 9:00 AM - 6:00 PM</p>
                   </div>
                 </div>
               </div>
@@ -95,15 +76,6 @@ export default function Home() {
               <p className="text-white/70">Copy your availability as text to share with anyone, anywhere.</p>
             </div>
           </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="mt-32 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to simplify your scheduling?</h2>
-          <p className="text-white/70 mb-8">Join thousands of professionals who are saving time with MyAvailability.</p>
-          <Button className="bg-primary hover:bg-primary-hover text-white h-12 px-8 rounded-full">
-            Get started for free
-          </Button>
         </div>
       </div>
     </div>

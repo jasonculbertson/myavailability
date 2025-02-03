@@ -4,43 +4,23 @@ import Link from "next/link"
 
 export default function HowItWorks() {
   return (
-    <div className="min-h-screen bg-[#111111] text-white">
-      {/* Navigation */}
-      <nav className="border-b border-white/10">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-8">
-            <Link href="/" className="text-xl font-bold text-primary">
-              MyAvailability
-            </Link>
-            <div className="hidden md:flex items-center space-x-6">
-              <Link href="/how-it-works" className="text-white hover:text-white/70 transition-colors">
-                How it Works
-              </Link>
-              <Link href="/schedule" className="text-white hover:text-white/70 transition-colors">
-                Schedule
-              </Link>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button className="text-white/70 hover:text-white transition-colors">Log In</button>
-            <Button className="bg-primary hover:bg-primary-hover text-white border-0">Get started</Button>
-          </div>
-        </div>
-      </nav>
-
-      <div className="container mx-auto px-4 py-24">
-        {/* Hero Section */}
-        <div className="max-w-4xl mx-auto text-center mb-24">
+    <div>
+      {/* Hero Section */}
+      <div className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto text-center mb-8">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">Simple, powerful scheduling</h1>
-          <p className="text-white/70 text-xl leading-relaxed">
+          <p className="text-white/70 text-xl mb-8 leading-relaxed">
             Share your availability in four easy steps. No more endless email chains or scheduling conflicts.
           </p>
         </div>
+      </div>
 
-        {/* Steps */}
-        <div className="max-w-5xl mx-auto">
-          {/* Step 1 */}
-          <div className="bg-[#1A1A1A] rounded-2xl border border-white/10 p-8 mb-12">
+      {/* Steps */}
+      <div className="max-w-5xl mx-auto">
+        {/* Step 1 */}
+        <div className="relative mb-12">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl blur-3xl"></div>
+          <div className="relative bg-[#1A1A1A] rounded-2xl border border-white/10 p-8">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <div className="inline-block bg-primary/10 text-primary rounded-full px-4 py-1 text-sm font-medium mb-4">
@@ -70,9 +50,12 @@ export default function HowItWorks() {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Step 2 */}
-          <div className="bg-[#1A1A1A] rounded-2xl border border-white/10 p-8 mb-12">
+        {/* Step 2 */}
+        <div className="relative mb-12">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl blur-3xl"></div>
+          <div className="relative bg-[#1A1A1A] rounded-2xl border border-white/10 p-8">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <div className="inline-block bg-primary/10 text-primary rounded-full px-4 py-1 text-sm font-medium mb-4">
@@ -121,9 +104,12 @@ export default function HowItWorks() {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Step 3 */}
-          <div className="bg-[#1A1A1A] rounded-2xl border border-white/10 p-8 mb-12">
+        {/* Step 3 */}
+        <div className="relative mb-12">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl blur-3xl"></div>
+          <div className="relative bg-[#1A1A1A] rounded-2xl border border-white/10 p-8">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <div className="inline-block bg-primary/10 text-primary rounded-full px-4 py-1 text-sm font-medium mb-4">
@@ -172,9 +158,12 @@ export default function HowItWorks() {
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Step 4 */}
-          <div className="bg-[#1A1A1A] rounded-2xl border border-white/10 p-8 mb-12">
+        {/* Step 4 */}
+        <div className="relative mb-12">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-purple-500/10 rounded-2xl blur-3xl"></div>
+          <div className="relative bg-[#1A1A1A] rounded-2xl border border-white/10 p-8">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <div className="inline-block bg-primary/10 text-primary rounded-full px-4 py-1 text-sm font-medium mb-4">
@@ -209,15 +198,6 @@ export default function HowItWorks() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="text-center mt-24">
-          <h2 className="text-3xl font-bold mb-4">Ready to get started?</h2>
-          <p className="text-white/70 mb-8">Set up your scheduling page in minutes.</p>
-          <Button className="bg-primary hover:bg-primary-hover text-white h-12 px-8 rounded-full">
-            Connect your calendar
-          </Button>
         </div>
       </div>
     </div>

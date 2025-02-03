@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { Providers } from './providers'
+import { Navigation } from '@/components/Navigation'
 
 export const metadata: Metadata = {
   title: 'MyAvailability',
@@ -13,7 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="min-h-screen bg-[#111111] text-white">
+        <Providers>
+          <Navigation />
+          {children}
+        </Providers>
+      </body>
     </html>
   )
 }

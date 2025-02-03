@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Copy, Check, Sun, Moon } from "lucide-react"
-import Link from "next/link"
-import { format, eachDayOfInterval } from "date-fns"
+import { format, eachDayOfInterval, startOfDay, endOfDay, isWithinInterval } from "date-fns"
 import { CustomCalendar } from "@/components/custom-calendar"
 import { motion, AnimatePresence } from "framer-motion"
 
@@ -23,21 +22,63 @@ interface DaySchedule {
   timeBlocks: TimeBlock[]
 }
 
-const generateTimeBlocks = (date: Date, meetingLength: number, bufferTime: number): TimeBlock[] => {
-  const blocks: TimeBlock[] = []
-  let currentTime = new Date(date.setHours(9, 0, 0, 0))
-  const endTime = new Date(date.setHours(17, 0, 0, 0))
+interface CalendarEvent {
+  start: { dateTime: string }
+  end: { dateTime: string }
+}
 
-  while (currentTime < endTime) {
+const generateTimeBlocks = (date: Date, meetingLength: number, bufferTime: number, events: CalendarEvent[] = []): TimeBlock[] => {
+  const blocks: TimeBlock[] = []
+  const dayStart = new Date(date)
+  dayStart.setHours(9, 0, 0, 0)
+  const dayEnd = new Date(date)
+  dayEnd.setHours(18, 0, 0, 0)
+
+  let currentTime = new Date(dayStart)
+
+  console.log('Generating blocks for date:', date)
+  console.log('Events to check:', events.map(event => ({
+    start: new Date(event.start.dateTime).toLocaleTimeString(),
+    end: new Date(event.end.dateTime).toLocaleTimeString()
+  })))
+
+  while (currentTime < dayEnd) {
     const blockEnd = new Date(currentTime.getTime() + meetingLength * 60000)
-    if (blockEnd > endTime) break
+    if (blockEnd > dayEnd) break
+
+    const isAvailable = !events.some(event => {
+      const eventStart = new Date(event.start.dateTime)
+      const eventEnd = new Date(event.end.dateTime)
+      
+      const hasOverlap = (
+        (currentTime >= eventStart && currentTime < eventEnd) ||  // block starts during event
+        (blockEnd > eventStart && blockEnd <= eventEnd) ||       // block ends during event
+        (currentTime <= eventStart && blockEnd >= eventEnd)      // block completely contains event
+      )
+
+      if (hasOverlap) {
+        console.log('Time block:', {
+          blockStart: currentTime.toLocaleTimeString(),
+          blockEnd: blockEnd.toLocaleTimeString(),
+          eventStart: eventStart.toLocaleTimeString(),
+          eventEnd: eventEnd.toLocaleTimeString(),
+          conditions: {
+            startsInEvent: currentTime >= eventStart && currentTime < eventEnd,
+            endsInEvent: blockEnd > eventStart && blockEnd <= eventEnd,
+            containsEvent: currentTime <= eventStart && blockEnd >= eventEnd
+          }
+        })
+      }
+
+      return hasOverlap
+    })
 
     blocks.push({
       id: currentTime.toISOString(),
       start: new Date(currentTime),
       end: blockEnd,
-      period: currentTime.getHours() < 12 ? "morning" : "afternoon",
-      selected: true,
+      period: currentTime.getHours() < 12 ? "morning" : currentTime.getHours() < 17 ? "afternoon" : "evening",
+      selected: isAvailable,
     })
 
     currentTime = new Date(blockEnd.getTime() + bufferTime * 60000)
@@ -53,27 +94,68 @@ export default function SchedulePage() {
   const [selectAllState, setSelectAllState] = useState<"select" | "unselect">("unselect")
   const [meetingLength, setMeetingLength] = useState(30)
   const [bufferTime, setBufferTime] = useState(15)
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([])
+
+  const fetchCalendarEvents = async (dates: Date[]) => {
+    if (dates.length === 0) return
+    
+    const startDate = startOfDay(dates[0])
+    const endDate = endOfDay(dates[dates.length - 1])
+    
+    try {
+      const response = await fetch(
+        `/api/calendar/events?start=${startDate.toISOString()}&end=${endDate.toISOString()}`
+      )
+      if (!response.ok) throw new Error('Failed to fetch calendar events')
+      const events = await response.json()
+      console.log('Fetched calendar events:', events)
+      setCalendarEvents(events)
+    } catch (error) {
+      console.error('Error fetching calendar events:', error)
+    }
+  }
+
+  useEffect(() => {
+    if (selectedDates.length > 0) {
+      fetchCalendarEvents(selectedDates)
+    }
+  }, [selectedDates])
+
+  useEffect(() => {
+    const newSchedule = selectedDates.map(date => {
+      // Filter events for this specific date
+      const dateEvents = calendarEvents.filter(event => {
+        const eventStart = new Date(event.start.dateTime)
+        const eventDay = startOfDay(eventStart).getTime()
+        const selectedDay = startOfDay(date).getTime()
+        const isMatch = eventDay === selectedDay
+        
+        if (isMatch) {
+          console.log('Found event:', {
+            summary: event.summary,
+            start: new Date(event.start.dateTime).toLocaleTimeString(),
+            end: new Date(event.end.dateTime).toLocaleTimeString()
+          })
+        }
+        
+        return isMatch
+      })
+
+      // Create a new date at midnight for the selected date
+      const selectedDate = new Date(date)
+      selectedDate.setHours(0, 0, 0, 0)
+
+      return {
+        date: selectedDate,
+        timeBlocks: generateTimeBlocks(selectedDate, meetingLength, bufferTime, dateEvents)
+      }
+    })
+    setSchedule(newSchedule)
+  }, [selectedDates, meetingLength, bufferTime, calendarEvents])
 
   useEffect(() => {
     updateSelectAllState()
   }, [])
-
-  useEffect(() => {
-    if (selectedDates.length > 0) {
-      const sortedDates = [...selectedDates].sort((a, b) => a.getTime() - b.getTime())
-      const days = eachDayOfInterval({
-        start: sortedDates[0],
-        end: sortedDates[sortedDates.length - 1],
-      })
-
-      setSchedule(
-        days.map((day) => ({
-          date: day,
-          timeBlocks: generateTimeBlocks(day, meetingLength, bufferTime),
-        })),
-      )
-    }
-  }, [selectedDates, meetingLength, bufferTime])
 
   const handleDateSelection = (dates: Date[]) => {
     setSelectedDates(dates)
@@ -95,21 +177,53 @@ export default function SchedulePage() {
     )
   }
 
+  const getTimeZoneAbbr = () => {
+    const date = new Date()
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    
+    // Convert time zone to abbreviation
+    const timeZoneStr = date.toLocaleTimeString('en-US', { timeZoneName: 'short', timeZone })
+    return timeZoneStr.split(' ').pop() // Gets "PST" or "PDT" from the string
+  }
+
   const handleCopy = () => {
+    const timeZoneAbbr = getTimeZoneAbbr()
     const selectedRanges = schedule
       .map((day) => {
-        const selectedBlocks = day.timeBlocks
-          .filter((block) => block.selected)
-          .map((block) => `${format(block.start, "h:mm a")} - ${format(block.end, "h:mm a")}`)
-        if (selectedBlocks.length > 0) {
-          return `${format(day.date, "EEEE, MMMM d")}:\n${selectedBlocks.join("\n")}`
+        const selectedBlocks = day.timeBlocks.filter((block) => block.selected)
+        if (selectedBlocks.length === 0) return null
+
+        // Sort blocks by start time
+        selectedBlocks.sort((a, b) => a.start.getTime() - b.start.getTime())
+
+        // Combine adjacent blocks (considering buffer time)
+        const combinedBlocks: { start: Date; end: Date }[] = []
+        let currentBlock = { start: selectedBlocks[0].start, end: selectedBlocks[0].end }
+
+        for (let i = 1; i < selectedBlocks.length; i++) {
+          const block = selectedBlocks[i]
+          const expectedNextStart = new Date(currentBlock.end.getTime() + bufferTime * 60000)
+          
+          // Check if this block starts exactly after the buffer time
+          if (block.start.getTime() === expectedNextStart.getTime()) {
+            currentBlock.end = block.end
+          } else {
+            combinedBlocks.push({ ...currentBlock })
+            currentBlock = { start: block.start, end: block.end }
+          }
         }
-        return null
+        combinedBlocks.push(currentBlock)
+
+        const timeRanges = combinedBlocks
+          .map((block) => `${format(block.start, "h:mm a")} - ${format(block.end, "h:mm a")}`)
+          .join("\n")
+
+        return `${format(day.date, "EEEE, MMMM d")}:\n${timeRanges}`
       })
       .filter(Boolean)
       .join("\n\n")
 
-    const textToCopy = `My availability is:\n\n${selectedRanges}`
+    const textToCopy = `My availability is (${timeZoneAbbr}):\n\n${selectedRanges}`
     navigator.clipboard.writeText(textToCopy)
     setCopyState("copied")
     setTimeout(() => setCopyState("idle"), 2000)
@@ -134,33 +248,7 @@ export default function SchedulePage() {
 
   return (
     <div className="min-h-screen bg-[#111111] text-white">
-      {/* Navigation */}
-      <nav className="border-b border-white/10">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center space-x-8">
-            <Link href="/" className="text-xl font-bold text-primary">
-              MyAvailability
-            </Link>
-            <div className="hidden md:flex items-center space-x-6">
-              <Link href="/how-it-works" className="text-white/70 hover:text-white transition-colors">
-                How it Works
-              </Link>
-              <Link href="/schedule" className="text-white/70 hover:text-white transition-colors">
-                Schedule
-              </Link>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <button className="text-white/70 hover:text-white transition-colors">Log In</button>
-            <Button className="bg-primary hover:bg-primary-hover text-white border-0">Get started</Button>
-          </div>
-        </div>
-      </nav>
       <div className="container mx-auto px-4 py-8 max-h-[calc(100vh-64px)] overflow-hidden">
-        {/* Remove this line */}
-        {/* <Link href="/" className="inline-flex items-center text-primary hover:text-primary-hover mb-8">
-          ← Back to Home
-        </Link> */}
         <div className="grid lg:grid-cols-2 gap-8 h-[calc(100vh-128px)] max-h-[675px]">
           <Card className="bg-[#1A1A1A] border-white/10">
             <CardHeader>
@@ -169,7 +257,10 @@ export default function SchedulePage() {
             </CardHeader>
             <CardContent>
               <div className="bg-white rounded-2xl p-8">
-                <CustomCalendar value={selectedDates} onChange={handleDateSelection} />
+                <CustomCalendar 
+                  selectedDates={selectedDates} 
+                  onSelect={handleDateSelection} 
+                />
               </div>
             </CardContent>
           </Card>
