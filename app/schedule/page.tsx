@@ -8,6 +8,8 @@ import { Copy, Check, Sun, Moon } from "lucide-react"
 import { format, eachDayOfInterval, startOfDay, endOfDay, isWithinInterval } from "date-fns"
 import { CustomCalendar } from "@/components/custom-calendar"
 import { motion, AnimatePresence } from "framer-motion"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 interface TimeBlock {
   id: string
@@ -95,6 +97,22 @@ export default function SchedulePage() {
   const [meetingLength, setMeetingLength] = useState(30)
   const [bufferTime, setBufferTime] = useState(15)
   const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([])
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (status === "unauthenticated" || !session?.accessToken) {
+      router.push('/')
+    }
+  }, [status, session, router])
+
+  if (status === "loading") {
+    return <div className="container mx-auto px-4 py-8">Loading...</div>
+  }
+
+  if (!session?.accessToken) {
+    return null
+  }
 
   const fetchCalendarEvents = async (dates: Date[]) => {
     if (dates.length === 0) return

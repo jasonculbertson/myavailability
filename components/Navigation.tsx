@@ -2,8 +2,12 @@
 
 import Link from "next/link"
 import { UserMenu } from "@/components/UserMenu"
+import { useSession } from "next-auth/react"
 
 export function Navigation() {
+  const { data: session } = useSession()
+  const isConnected = !!session?.accessToken
+
   return (
     <nav className="border-b border-white/10">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -15,9 +19,11 @@ export function Navigation() {
             <Link href="/how-it-works" className="text-white/70 hover:text-white transition-colors">
               How it Works
             </Link>
-            <Link href="/schedule" className="text-white/70 hover:text-white transition-colors">
-              Schedule
-            </Link>
+            {isConnected && (
+              <Link href="/schedule" className="text-white/70 hover:text-white transition-colors">
+                Schedule
+              </Link>
+            )}
           </div>
         </div>
         <div className="flex items-center space-x-4">
