@@ -1,11 +1,15 @@
 import type { Metadata } from 'next'
+import { Inter } from "next/font/google"
 import './globals.css'
 import { Providers } from './providers'
 import { Navigation } from '@/components/Navigation'
+import { Footer } from '@/components/Footer'
+
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: 'MyAvailability',
-  description: 'Created with v0',
+  description: 'Share your availability with ease',
 }
 
 export default function RootLayout({
@@ -14,11 +18,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-[#111111] text-white">
+    <html lang="en" className="dark">
+      <body className={inter.className}>
         <Providers>
-          <Navigation />
-          {children}
+          <div className="min-h-screen flex flex-col bg-black text-white">
+            <Navigation />
+            <main className="flex-grow">
+              {children}
+            </main>
+            <Footer />
+          </div>
         </Providers>
       </body>
     </html>
