@@ -23,7 +23,7 @@ interface CalendarProps {
   numberOfMonths?: number
 }
 
-xport function CustomCalendar({ value, onChange, numberOfMonths = 2 }: CalendarProps) {
+export function CustomCalendar({ value, onChange, numberOfMonths = 2 }: CalendarProps) {
   const [baseDate, setBaseDate] = useState(startOfToday())
   const [selectedDates, setSelectedDates] = useState<Date[]>([])
 
