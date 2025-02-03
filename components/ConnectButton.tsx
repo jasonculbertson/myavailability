@@ -7,23 +7,23 @@ import { signIn, signOut, useSession } from "next-auth/react"
 export function ConnectButton() {
   const { data: session } = useSession()
 
-  const handleAuth = async () => {
+  const handleClick = () => {
     if (session) {
-      await signOut()
+      signOut()
     } else {
-      await signIn('google', {
+      signIn('google', {
         callbackUrl: '/schedule',
       })
     }
   }
 
   return (
-    <Button 
-      onClick={handleAuth}
+    <Button
+      onClick={handleClick}
       className="bg-primary hover:bg-primary-hover text-white h-12 px-8 rounded-full"
     >
       <Calendar className="w-5 h-5 mr-2" />
-      {session ? 'Disconnect Google Calendar' : 'Connect Google Calendar'}
+      {session ? 'Sign out' : 'Continue with Google'}
     </Button>
   )
 }
