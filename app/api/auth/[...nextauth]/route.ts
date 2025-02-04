@@ -15,6 +15,7 @@ export const authOptions = {
   site: process.env.NEXTAUTH_URL,
   providers: [
     Google({
+      id: 'google',
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
       authorization: {

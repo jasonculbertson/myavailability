@@ -7,18 +7,20 @@ import { signIn, signOut, useSession } from "next-auth/react"
 export function ConnectButton() {
   const { data: session } = useSession()
 
-  const handleAuth = async () => {
-    try {
-      if (session) {
-        await signOut()
-      } else {
-        await signIn('google', {
-          callbackUrl: '/schedule',
-          redirect: true
-        })
-      }
-    } catch (error) {
-      console.error('Auth error:', error)
+  const handleAuth = () => {
+    console.log('Button clicked');
+    console.log('Current session:', session);
+    
+    if (session) {
+      console.log('Signing out...');
+      signOut({
+        callbackUrl: '/',
+        redirect: true
+      }).catch(error => console.error('Signout error:', error));
+    } else {
+      console.log('Signing in...');
+      // Use window.location for a hard redirect
+      window.location.href = `/api/auth/signin/google?callbackUrl=${encodeURIComponent('/schedule')}`;
     }
   }
 
