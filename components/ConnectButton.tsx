@@ -8,12 +8,17 @@ export function ConnectButton() {
   const { data: session } = useSession()
 
   const handleAuth = async () => {
-    if (session) {
-      await signOut()
-    } else {
-      await signIn('google', {
-        callbackUrl: '/schedule',
-      })
+    try {
+      if (session) {
+        await signOut()
+      } else {
+        await signIn('google', {
+          callbackUrl: '/schedule',
+          redirect: true
+        })
+      }
+    } catch (error) {
+      console.error('Auth error:', error)
     }
   }
 

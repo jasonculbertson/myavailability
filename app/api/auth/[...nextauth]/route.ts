@@ -12,6 +12,7 @@ interface ExtendedToken extends JWT {
 }
 
 export const authOptions = {
+  site: process.env.NEXTAUTH_URL,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -45,7 +46,8 @@ export const authOptions = {
   pages: {
     signIn: '/',
   },
-  debug: process.env.NODE_ENV === 'development',
+  debug: true, // Temporarily enable debug for troubleshooting
+  secret: process.env.NEXTAUTH_SECRET,
 }
 
 const handler = NextAuth(authOptions)
